@@ -1,0 +1,185 @@
+/* ===== base.css — Theme Bible Applied ===== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body{
+
+    font-family:var(--font);
+
+    color:var(--text-primary);
+
+    background:
+
+        var(--cosmic-purple)
+
+        url("../assets/images/space_background.jpg")
+
+        center center / cover
+
+        no-repeat
+
+        fixed;
+
+    min-height:100vh;
+
+    overflow-x:hidden;
+
+    direction:rtl;
+
+}
+
+/* ستاره‌های پس‌زمینه */
+body::before{
+
+content:"";
+
+position:fixed;
+
+inset:0;
+
+pointer-events:none;
+
+z-index:-2;
+
+background-image:
+
+url("../assets/images/stars_layer_1.png"),
+
+url("../assets/images/stars_layer_2.png"),
+
+url("../assets/images/stars_layer_3.png"),
+
+url("../assets/images/twinkle_01.png"),
+
+url("../assets/images/twinkle_02.png"),
+
+url("../assets/images/twinkle_03.png");
+
+background-repeat:no-repeat;
+
+background-size:
+
+cover,
+
+cover,
+
+cover,
+
+120px,
+
+90px,
+
+70px;
+
+background-position:
+
+center,
+
+center,
+
+center,
+
+10% 20%,
+
+70% 30%,
+
+85% 75%;
+
+animation:starTwinkle 6s linear infinite;
+
+opacity:.75;
+
+}
+}
+
+/* Nebula */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    radial-gradient(ellipse 600px 400px at 15% 80%, rgba(108, 92, 231, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 500px 300px at 85% 20%, rgba(0, 206, 201, 0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 400px 500px at 60% 50%, rgba(162, 155, 254, 0.06) 0%, transparent 60%);
+    url("../assets/images/nebula_01.png"),
+    url("../assets/images/nebula_02.png"),
+    url("../assets/images/nebula_03.png"),
+    url("../assets/images/moon.png"),
+    url("../assets/images/planet_left.png"),
+    url("../assets/images/planet_right.png"),
+    url("../assets/images/galaxy.png");
+    background-position:
+     10% 80%,
+     90% 20%,
+     55% 45%;
+  pointer-events: none;
+  z-index: -1;
+}
+
+@keyframes starTwinkle {
+  0%   { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary);
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+p {
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+
+a {
+  color: var(--neon-violet);
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+::selection {
+  background: var(--electric-purple);
+  color: var(--text-primary);
+}
+
+/* اسکرول‌بار */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--cosmic-purple);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--electric-purple);
+  border-radius: 999px;
+}
+
+/* Focus accessibility */
+*:focus-visible {
+  outline: 2px solid var(--neon-cyan);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before {
+    animation: none;
+  }
+}

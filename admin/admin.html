@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>پنل مدیریت — سفر احساسات</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+  <!-- ===== Login Screen ===== -->
+  <div id="loginScreen" class="login-screen">
+    <div class="login-card">
+      <div class="login-icon">🔐</div>
+      <h1 class="login-title">پنل مدیریت</h1>
+      <p class="login-subtitle">سفر احساسات</p>
+      <input
+        type="password"
+        id="adminPassword"
+        class="login-input"
+        placeholder="رمز عبور..."
+        autocomplete="off"
+      >
+      <button id="loginBtn" class="login-btn">ورود</button>
+      <div id="loginError" class="login-error" style="display:none">رمز عبور اشتباه است</div>
+    </div>
+  </div>
+
+  <!-- ===== Dashboard ===== -->
+  <div id="dashboard" class="dashboard" style="display:none">
+
+    <!-- Header -->
+    <header class="admin-header">
+      <h1 class="admin-header__title">🚀 پنل مدیریت — سفر احساسات</h1>
+      <button id="logoutBtn" class="admin-header__logout">خروج</button>
+    </header>
+
+    <!-- Tabs -->
+    <nav class="admin-tabs">
+      <button class="admin-tab active" data-tab="content">📝 محتوا</button>
+      <button class="admin-tab" data-tab="audio">🔊 صدا</button>
+      <button class="admin-tab" data-tab="sections">📦 بخش‌ها</button>
+      <button class="admin-tab" data-tab="answers">📊 پاسخ‌ها</button>
+    </nav>
+
+    <!-- ===== Tab: Content ===== -->
+    <section id="tab-content" class="admin-tab-content active">
+      <div class="tab-header">
+        <h2>ویرایش متن‌ها</h2>
+        <p>متن دیالوگ‌ها، داستان‌ها و سؤالات را ویرایش کنید.</p>
+      </div>
+      <div id="contentList" class="content-list">
+        <!-- متن‌ها اینجا لود می‌شوند -->
+      </div>
+      <button id="saveContentBtn" class="save-btn">💾 ذخیره تغییرات</button>
+    </section>
+
+    <!-- ===== Tab: Audio ===== -->
+    <section id="tab-audio" class="admin-tab-content">
+      <div class="tab-header">
+        <h2>مدیریت صدا</h2>
+        <p>فایل MP3 را برای هر متن آپلود کنید.</p>
+      </div>
+      <div id="audioList" class="audio-list">
+        <!-- آیتم‌های صوتی اینجا لود می‌شوند -->
+      </div>
+      <button id="saveAudioBtn" class="save-btn">💾 ذخیره صداها</button>
+    </section>
+
+    <!-- ===== Tab: Sections ===== -->
+    <section id="tab-sections" class="admin-tab-content">
+      <div class="tab-header">
+        <h2>مدیریت بخش‌ها</h2>
+        <p>بخش‌های بازی را فعال یا غیرفعال کنید.</p>
+      </div>
+      <div class="sections-list">
+        <div class="section-card">
+          <div class="section-card__info">
+            <h3>بخش اول</h3>
+            <p>شامل ایستگاه‌های ۱ تا ۴</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="section1Enabled" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="section-card">
+          <div class="section-card__info">
+            <h3>بخش دوم</h3>
+            <p>شامل ایستگاه‌های ۵ تا ۸</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="section2Enabled">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+      <button id="saveSectionsBtn" class="save-btn">💾 ذخیره تنظیمات</button>
+    </section>
+
+    <!-- ===== Tab: Answers ===== -->
+    <section id="tab-answers" class="admin-tab-content">
+      <div class="tab-header">
+        <h2>پاسخ‌های دانش‌آموزان</h2>
+        <p>مشاهده و خروجی اکسل پاسخ‌ها.</p>
+      </div>
+      <div class="answers-toolbar">
+        <button id="exportExcelBtn" class="export-btn">📊 خروجی اکسل</button>
+        <button id="refreshAnswersBtn" class="refresh-btn">🔄 به‌روزرسانی</button>
+        <button id="clearAnswersBtn" class="danger-btn">🗑️ حذف همه پاسخ‌ها</button>
+      </div>
+      <div id="answersList" class="answers-list">
+        <!-- پاسخ‌ها اینجا لود می‌شوند -->
+      </div>
+    </section>
+
+  </div>
+
+  <script src="../js/utils.js"></script>
+  <script src="../js/content-layer.js"></script>
+  <script src="../js/content.js"></script>
+  <script src="../js/answer-store.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

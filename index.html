@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<!--
+  ════════════════════════════════════════════════════════
+   سفینه احساسات — Emotion Spaceship
+   Production Build v1.0
+
+   Architecture:
+     content.js → utils → content-layer → answer-store
+     → {audio, alien} → renderers → engine → ui → app
+
+   Script loading: defer (parallel download, ordered execution)
+   All scripts execute AFTER DOM parsing.
+   Order: content → utils → content-layer → answer-store
+          → audio → alien → renderers → engine → ui → app
+   ════════════════════════════════════════════════════════
+-->
+<html lang="fa" dir="rtl">
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="theme-color" content="#0B0620">
+  <meta name="description" content="سفینه احساسات — بازی آموزشی شناخت و مدیریت احساسات">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <title>سفینه احساسات</title>
+
+  <!--
+    ═══ CSS LOAD ORDER ═══
+    1. variables.css  — CSS custom properties (colors, spacing, fonts)
+    2. base.css       — reset, typography, layout primitives
+    3. slides.css     — slide type styles (station-intro, story, farewell)
+    4. ui.css         — interactive components (buttons, inputs, feedback)
+    5. responsive.css — media queries (must load last to override)
+  -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/slides.css">
+  <link rel="stylesheet" href="css/ui.css">
+  <link rel="stylesheet" href="css/responsive.css">
+
+  <!--
+    ═══ CRITICAL CSS: prevent FOUC ═══
+    Minimal inline styles to ensure game container
+    is hidden until CSS loads. Replaced by CSS file rules.
+  -->
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #0B0620;
+      color: #e0e0e0;
+      font-family: 'Vazirmatn', 'Vazir', Tahoma, Arial, sans-serif;
+      direction: rtl;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .game {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      max-width: 720px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .game__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .game__messages {
+      position: relative;
+      min-height: 0;
+      flex-shrink: 0;
+    }
+    .game__slide {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .game__footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      flex-shrink: 0;
+      gap: 12px;
+    }
+    .game__progress {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }
+    .progress {
+      flex: 1;
+      height: 6px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .progress__fill {
+      height: 100%;
+      width: 0%;
+      background: #f59e0b;
+      border-radius: 3px;
+      transition: width 0.4s ease;
+    }
+    .progress__pct {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.7);
+      min-width: 32px;
+      text-align: center;
+    }
+    .game__nav {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.6);
+    }
+    .nav__sep {
+      color: rgba(255,255,255,0.3);
+    }
+    .station-badge {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #f59e0b;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 160px;
+    }
+    .msg {
+      padding: 10px 16px;
+      font-size: 0.9rem;
+      text-align: center;
+      border-radius: 0;
+      transition: opacity 0.3s ease;
+    }
+    .msg--error {
+      background: rgba(239,68,68,0.15);
+      color: #fca5a5;
+      border-bottom: 1px solid rgba(239,68,68,0.3);
+    }
+    .msg--success {
+      background: rgba(34,197,94,0.15);
+      color: #86efac;
+      border-bottom: 1px solid rgba(34,197,94,0.3);
+    }
+    .btn--nav {
+      padding: 10px 20px;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.05);
+      color: #e0e0e0;
+      font-family: inherit;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      min-width: 90px;
+    }
+    .btn--nav:hover:not(:disabled) {
+      background: rgba(255,255,255,0.12);
+      border-color: rgba(255,255,255,0.35);
+    }
+    .btn--nav:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+    .noscript {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 2rem;
+      text-align: center;
+      font-size: 1.1rem;
+      color: #fca5a5;
+      background: #0B0620;
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <!-- ═══ NOSCRIPT FALLBACK ═══ -->
+  <noscript>
+    <div class="noscript">
+      <div>
+        <p style="font-size:3rem;margin-bottom:1rem;">🚀</p>
+        <p>برای سوار شدن به سفینه احساسات، لطفاً جاوااسکریپت را فعال کنید.</p>
+      </div>
+    </div>
+  </noscript>
+
+
+  <!-- ═══════════════════════════════════════════════
+       GAME CONTAINER
+       All 10 required DOM elements are inside this.
+       ═══════════════════════════════════════════════ -->
+  <div id="game" class="game" role="main" aria-label="سفینه احساسات">
+
+
+    <!-- ── HEADER / CHROME ──────────────────────────── -->
+    <header class="game__header" role="banner">
+
+      <!-- Station name -->
+      <span id="stationBadge"
+            class="station-badge"
+            aria-live="polite"
+            aria-atomic="true"></span>
+
+      <!-- Progress bar -->
+      <div class="game__progress">
+        <div class="progress"
+             role="progressbar"
+             aria-valuemin="0"
+             aria-valuemax="100"
+             aria-valuenow="0"
+             aria-label="پیشرفت بازی"
+             data-initial="0">
+          <div id="progressFill" class="progress__fill"></div>
+        </div>
+        <span id="progressPct"
+              class="progress__pct"
+              aria-live="polite"
+              aria-atomic="true">۰٪</span>
+      </div>
+
+      <!-- Slide counter -->
+      <div class="game__nav" aria-label="شماره اسلاید">
+        <span id="navCurrent" class="nav__current">۱</span>
+        <span class="nav__sep">از</span>
+        <span id="navTotal" class="nav__total">۱</span>
+      </div>
+
+    </header>
+
+
+    <!-- ── VALIDATION MESSAGES ──────────────────────── -->
+    <!--
+      style="display:none" matches what renderers.js expects:
+      - showError() sets style.display = 'block'
+      - hideError() sets style.display = 'none'
+    -->
+    <div class="game__messages">
+      <div id="valError"
+           class="msg msg--error"
+           role="alert"
+           aria-live="assertive"
+           aria-atomic="true"
+           style="display:none"></div>
+      <div id="valSuccess"
+           class="msg msg--success"
+           role="status"
+           aria-live="polite"
+           aria-atomic="true"
+           style="display:none"></div>
+    </div>
+
+
+    <!-- ── SLIDE CONTENT ────────────────────────────── -->
+    <!--
+      This is the main content area.
+      Renderers.render() sets this element's innerHTML.
+      Event delegation is attached here by Renderers.init().
+    -->
+    <main id="slideWrapper"
+          class="game__slide"
+          aria-live="polite"
+          aria-atomic="true"
+          aria-label="محتوای اسلاید"
+          aria-hidden="false">
+      <!--
+        Dynamic content injected by Renderers.render().
+
+        On first load or recovery, Engine.renderCurrentSlide()
+        produces a renderData object, which Renderers converts
+        to HTML and injects here.
+
+        Possible slide types:
+          - .sr-slide--station-intro
+          - .sr-slide--story
+          - .sr-slide--farewell
+      -->
+    </main>
+
+
+    <!-- ── NAVIGATION FOOTER ────────────────────────── -->
+    <footer class="game__footer" role="navigation" aria-label="ناوبری اسلاید">
+
+      <button id="btnPrev"
+              class="btn btn--nav btn--prev"
+              type="button"
+              disabled
+              aria-disabled="true"
+              aria-label="اسلاید قبلی"
+              title="قبلی (→)">
+        ← قبلی
+      </button>
+
+      <button id="btnNext"
+              class="btn btn--nav btn--next"
+              type="button"
+              aria-label="اسلاید بعدی"
+              title="بعدی (←)">
+        بعدی →
+      </button>
+
+    </footer>
+
+
+  </div><!-- /game -->
+
+
+  <!-- ═══════════════════════════════════════════════
+       SCRIPTS — Dependency Order
+
+       All scripts use defer:
+         - Parallel download (fast)
+         - Sequential execution (correct order)
+         - Execute after DOM parsing (DOM ready)
+
+       Auto-boot: app.js IIFE calls App.bootstrap()
+       when it detects DOM is ready.
+
+       content.js is the production content file.
+       content_v5_draft.js is legacy and not loaded.
+       ═══════════════════════════════════════════════ -->
+
+  <!-- Layer 0: Data (frozen content) -->
+  <script defer src="js/content.js"></script>
+
+  <!-- Layer 1: Utilities (standalone — no dependencies) -->
+  <script defer src="js/utils.js"></script>
+
+  <!-- Layer 2: Access (read-only API over content — uses Utils) -->
+  <script defer src="js/content-layer.js"></script>
+
+  <!-- Layer 3: Persistence (localStorage, scoring — uses CL + Utils) -->
+  <script defer src="js/answer-store.js"></script>
+
+  <!-- Layer 4: Audio & Character (standalone modules) -->
+  <script defer src="js/audio.js"></script>
+  <script defer src="js/alien.js"></script>
+
+  <!-- Layer 5: Rendering (DOM builder — standalone) -->
+  <script defer src="js/renderers.js"></script>
+
+  <!-- Layer 6: Logic (game engine — needs CL + AS) -->
+  <script defer src="js/engine.js"></script>
+
+  <!-- Layer 7: UI (advanced interface — needs Engine) -->
+  <script defer src="js/ui.js"></script>
+
+  <!-- Layer 8: Controller (orchestrator — MUST be last) -->
+  <script defer src="js/app.js"></script>
+
+</body>
+</html>

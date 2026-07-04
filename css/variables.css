@@ -1,0 +1,18 @@
+:root{
+  --font:'Vazirmatn',sans-serif;
+  --cosmic-purple:#0B0620;
+  --deep-purple:#130D2E;
+ --electric-purple:#6C5CE7;
+  --neon-violet:#A29BFE;
+  --soft-lavender:#C9B8E0;
+  --light-lavender:#D4B8FF;
+  --neon-cyan:#00CEC9;
+  --solar-yellow:#FDCB6E;
+  --text-primary:#F8F0FF;
+  --text-secondary:#C9B8E0;
+  --text-muted:#8B7FA8;
+  --input-bg:rgba(255,255,255,.06);
+  --input-border:rgba(255,255,255,.1);
+  --error:#FF7675;
+  --success:#55EFC4;
+}

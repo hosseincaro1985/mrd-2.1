@@ -1,0 +1,38 @@
+/* ===== MOBILE SMALL ===== */
+@media(max-width:480px){
+  .header{padding:10px 14px;}
+  .header-title{font-size:15px;}
+  .header-badge{font-size:11px;padding:4px 10px;}
+  .app-container{padding:0 12px;padding-bottom:120px;}
+  .story-card{padding:18px 14px;border-radius:18px;}
+  .dialogue-box{padding:14px 16px;}
+  .dialogue-text{font-size:14px;}
+  .station-number{font-size:44px;}
+  .station-name{font-size:18px;}
+  .option-card{padding:12px 14px;}
+  .option-text{font-size:14px;}
+  .bottom-nav{padding:10px 14px 16px;}
+  .nav-btn{padding:10px 20px;font-size:14px;}
+  .farewell-emoji{font-size:48px;}
+  .alien-float svg{width:85px;}
+  .story-text{font-size:14px;}
+  .question-text{font-size:14px;}
+}
+
+/* ===== LANDSCAPE SHORT ===== */
+@media(max-height:500px)and(orientation:landscape){
+  .alien-float{margin-bottom:8px;}
+  .alien-float svg{width:70px;}
+  .dialogue-box{padding:10px 14px;margin-bottom:12px;}
+}
+
+/* ===== TABLET ===== */
+@media(min-width:481px)and(max-width:768px){
+  .app-container{padding:0 20px;}
+}
+
+/* ===== SAFE AREA ===== */
+@supports(padding-bottom:env(safe-area-inset-bottom)){
+  .bottom-nav{padding-bottom:calc(16px + env(safe-area-inset-bottom));}
+  .app-container{padding-bottom:calc(130px + env(safe-area-inset-bottom));}
+}
